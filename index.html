@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fake System Scan</title>
+<title>Critical System Error</title>
+
 <style>
 body {
     background: black;
@@ -11,81 +12,48 @@ body {
     text-align: center;
     padding-top: 60px;
 }
-
-.blink {
-    animation: blinker 0.3s infinite;
-}
-@keyframes blinker {
-    50% { opacity: 0; }
-}
-
-#box {
+#errorBox {
     width: 90%;
     margin: auto;
     padding: 20px;
     border: 2px solid red;
+    background: #190000;
     border-radius: 10px;
-    background: #200000;
-    text-align: left;
-    font-size: 16px;
 }
-
-#count {
-    font-size: 28px;
-    margin-top: 15px;
+button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: red;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    font-weight: bold;
+    font-size: 18px;
 }
 </style>
 </head>
 
 <body>
 
-<h1 class="blink">CRITICAL SYSTEM ERROR</h1>
-<p>Unusual activity detected… system stability compromised.</p>
+<h1 style="color:red;">CRITICAL SYSTEM ERROR</h1>
+<p style="color:red;">Unstable kernel detected — action required</p>
 
-<div id="box">
-    <pre id="log">Initializing scan...</pre>
+<div id="errorBox">
+    <pre>
+[ERROR] System instability detected
+[INFO] Memory usage: 97%
+[CRITICAL] Device malfunction imminent
+    </pre>
+
+    <button onclick="startVibrate()">OK</button>
 </div>
 
-<p id="count"></p>
-
 <script>
-let lines = [
-    "[ERROR] Kernel subsystem unstable…",
-    "[INFO] Active apps: 27 | Memory usage: 98%",
-    "[CHECK] Verifying filesystem...",
-    "[SCAN] Sector scan 13%",
-    "[SCAN] Sector scan 27%",
-    "[SCAN] Sector scan 41%",
-    "[SCAN] Sector scan 59%",
-    "[SCAN] Sector scan 76%",
-    "[ERROR] Unexpected behavior detected!",
-    "[WARN] Attempting to stabilize system..."
-];
-
-let i = 0;
-let log = document.getElementById("log");
-
-let timer = setInterval(() => {
-    if(i < lines.length){
-        log.textContent += "\n" + lines[i];
-        i++;
-    } else {
-        clearInterval(timer);
-        startCountdown();
+function startVibrate() {
+    if (navigator.vibrate) {
+        navigator.vibrate([500, 200, 500, 200, 1000, 300, 500]);
     }
-}, 600);
-
-function startCountdown() {
-    let c = 10;
-    let counter = document.getElementById("count");
-    let t = setInterval(() => {
-        counter.textContent = "Shutdown in " + c;
-        c--;
-        if(c < 0){
-            clearInterval(t);
-            counter.textContent = "System Stabilized ✔";
-        }
-    }, 1000);
+    document.body.style.background = "darkred";
 }
 </script>
 

@@ -2,70 +2,91 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>System Error</title>
+<title>Fake System Scan</title>
 <style>
 body {
     background: black;
     color: red;
     font-family: monospace;
     text-align: center;
-    padding-top: 100px;
+    padding-top: 60px;
 }
-#msg {
-    font-size: 25px;
-    display: none;
+
+.blink {
+    animation: blinker 0.3s infinite;
 }
-#tap {
-    font-size: 22px;
-    color: white;
+@keyframes blinker {
+    50% { opacity: 0; }
 }
-.flash {
-    background: red !important;
+
+#box {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+    border: 2px solid red;
+    border-radius: 10px;
+    background: #200000;
+    text-align: left;
+    font-size: 16px;
+}
+
+#count {
+    font-size: 28px;
+    margin-top: 15px;
 }
 </style>
 </head>
+
 <body>
 
-<h2 id="tap">⚠️ SYSTEM FAILURE — TAP TO SCAN ⚠️</h2>
-<div id="msg">SYSTEM ERROR: CRITICAL FAILURE<br>Rebooting Device...</div>
+<h1 class="blink">CRITICAL SYSTEM ERROR</h1>
+<p>Unusual activity detected… system stability compromised.</p>
+
+<div id="box">
+    <pre id="log">Initializing scan...</pre>
+</div>
+
+<p id="count"></p>
 
 <script>
-document.body.addEventListener("click", function() {
+let lines = [
+    "[ERROR] Kernel subsystem unstable…",
+    "[INFO] Active apps: 27 | Memory usage: 98%",
+    "[CHECK] Verifying filesystem...",
+    "[SCAN] Sector scan 13%",
+    "[SCAN] Sector scan 27%",
+    "[SCAN] Sector scan 41%",
+    "[SCAN] Sector scan 59%",
+    "[SCAN] Sector scan 76%",
+    "[ERROR] Unexpected behavior detected!",
+    "[WARN] Attempting to stabilize system..."
+];
 
-    // Hide tap text
-    document.getElementById("tap").style.display = "none";
-    document.getElementById("msg").style.display = "block";
+let i = 0;
+let log = document.getElementById("log");
 
-    // VIBRATION (works only after user gesture)
-    if (navigator.vibrate) {
-        navigator.vibrate([300,200,300,200,600]);
+let timer = setInterval(() => {
+    if(i < lines.length){
+        log.textContent += "\n" + lines[i];
+        i++;
+    } else {
+        clearInterval(timer);
+        startCountdown();
     }
+}, 600);
 
-    // FLASHLIGHT (works only when site is HTTPS — GitHub Pages is HTTPS)
-    async function flashLight() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }});
-            const track = stream.getVideoTracks()[0];
-            await track.applyConstraints({ advanced: [{ torch: true }] });
-
-            // Turn flash off after 3 seconds
-            setTimeout(() => track.applyConstraints({ advanced: [{ torch: false }] }), 3000);
-
-        } catch (e) {
-            console.log("Flash not supported: ", e);
+function startCountdown() {
+    let c = 10;
+    let counter = document.getElementById("count");
+    let t = setInterval(() => {
+        counter.textContent = "Shutdown in " + c;
+        c--;
+        if(c < 0){
+            clearInterval(t);
+            counter.textContent = "System Stabilized ✔";
         }
-    }
-    flashLight();
-
-    // SCREEN FLASHING EFFECT
-    let x = 0;
-    let flashInt = setInterval(() => {
-        document.body.classList.toggle("flash");
-        x++;
-        if (x > 8) clearInterval(flashInt);
-    }, 150);
-
-});
+    }, 1000);
+}
 </script>
 
 </body>

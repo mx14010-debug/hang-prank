@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html>
 <head>
 <title>System Alert</title>
@@ -6,60 +6,120 @@
 body {
   margin: 0;
   background: black;
-  color: red;
-  font-family: sans-serif;
+  color: #ff0000;
+  font-family: Arial, sans-serif;
   text-align: center;
-  padding-top: 50px;
-  animation: flash 0.2s infinite alternate;
+  padding-top: 40px;
+  animation: flash 0.3s infinite alternate;
 }
 
 @keyframes flash {
   0% { background: black; }
-  100% { background: #3b0000; }
+  100% { background: #2b0000; }
 }
 
-.warning {
-  font-size: 28px;
-  font-weight: bold;
-  margin-top: 30px;
+#alertBox, #virusBox, #shutdownBox {
+  width: 90%;
+  margin: auto;
+  background: #1a1a1a;
+  border: 2px solid red;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  display: none;
 }
 
-.subtext {
+.title {
+  font-size: 26px;
+  margin-bottom: 10px;
   color: #ff4444;
-  font-size: 18px;
-  margin-top: 10px;
 }
 </style>
 </head>
-<body onclick="goFull()">
+<body onclick="startPrank()">
 
-<h1>⚠ SYSTEM ALERT ⚠</h1>
+<h1>⚠ SYSTEM FAILURE WARNING ⚠</h1>
+<p>Tap anywhere to continue…</p>
 
-<div class="warning">Unusual Activity Detected!</div>
-<div class="subtext">Your device is overheating…</div>
-<div class="subtext">Screen freeze possible</div>
-<div class="subtext">Do NOT turn off your phone!</div>
+<div id="alertBox">
+  <div class="title">⚠ Critical System Error</div>
+  Unusual activity detected on your device.<br>
+  Possible malware found.<br><br>
+  <b>Attempting to stabilize system…</b>
+</div>
+
+<br>
+
+<div id="virusBox">
+  <div class="title">🔍 Scanning for threats…</div>
+  <span id="scanText">Scanning files… 0%</span>
+</div>
+
+<br>
+
+<div id="shutdownBox">
+  <div class="title">⚠ Device Shutdown Imminent</div>
+  Your device will power off in <b id="timer">10</b> seconds.<br>
+  DO NOT TURN OFF YOUR PHONE!
+</div>
 
 <script>
-function goFull() {
+let started = false;
+
+function startPrank() {
+    if (started) return;
+    started = true;
+
     document.documentElement.requestFullscreen().catch(()=>{});
-    fakeVibrate();
+    vibrateLoop();
+
+    // Step 1: Critical alert
+    document.getElementById("alertBox").style.display = "block";
+
+    setTimeout(() => {
+        // Step 2: Virus scan animation
+        document.getElementById("virusBox").style.display = "block";
+        fakeScan();
+    }, 2000);
+
+    setTimeout(() => {
+        // Step 3: Shutdown countdown
+        document.getElementById("shutdownBox").style.display = "block";
+        countdown();
+    }, 6000);
 }
 
-function fakeVibrate() {
+function fakeScan() {
+    let percent = 0;
+    let scanInterval = setInterval(() => {
+        percent += Math.floor(Math.random() * 15);
+        if (percent > 100) percent = 100;
+        document.getElementById("scanText").innerText = "Scanning files… " + percent + "%";
+
+        if (percent >= 100) clearInterval(scanInterval);
+    }, 300);
+}
+
+function countdown() {
+    let time = 10;
+    let timerElem = document.getElementById("timer");
+
+    let interval = setInterval(() => {
+        time--;
+        timerElem.innerText = time;
+        if (time <= 0) {
+            clearInterval(interval);
+            alert("⚠ SYSTEM FAILURE!");
+        }
+    }, 1000);
+}
+
+function vibrateLoop() {
     if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 200, 100, 300]);
+        navigator.vibrate([200, 150, 200, 150, 300]);
     }
-    setTimeout(fakeVibrate, 1500);
+    setTimeout(vibrateLoop, 1500);
 }
-
-setTimeout(() => {
-  alert("⚠ Critical Error: System Freeze Detected!");
-}, 2000);
-
-setTimeout(() => {
-  alert("⚠ Your device will shutdown!");
-}, 5000);
 </script>
 
 </body>

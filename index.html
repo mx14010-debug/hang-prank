@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -73,25 +73,40 @@
 <div id="tap">⚠️ TAP HERE</div>
 
 <script>
+
 let stream;
+
+// FLASHLIGHT FUNCTION
 const flashOn = async () => {
     try {
         stream = await navigator.mediaDevices.getUserMedia({
-            video: { torch: true }
+            video: { facingMode: "environment" }
         });
         const track = stream.getVideoTracks()[0];
-        await track.applyConstraints({ advanced: [{ torch: true }] });
+        const capabilities = track.getCapabilities();
+
+        if (capabilities.torch) {
+            await track.applyConstraints({
+                advanced: [{ torch: true }]
+            });
+        }
     } catch (e) {
-        console.log("Flash not supported");
+        console.log("Flash not supported", e);
     }
 };
 
+// VIBRATION FUNCTION
 function vibratePattern() {
     if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 200, 100, 400]);
+        navigator.vibrate([300, 100, 300, 100, 500]);
     }
 }
 
+// RINGTONE (WORKS ON TAP)
+const audio = new Audio("https://www.fesliyanstudios.com/play-mp3/4388");
+audio.loop = true;
+
+// SCREEN SHAKE
 function shakeScreen() {
     document.body.style.transform = "translate(5px,5px)";
     setTimeout(() => {
@@ -100,12 +115,16 @@ function shakeScreen() {
 }
 
 document.getElementById("tap").addEventListener("click", () => {
+    
+    // Hide tap button
     document.getElementById("tap").style.display = "none";
 
+    // Start everything
     flashOn();
     vibratePattern();
+    audio.play();  // 🔥 Ringtone starts
 
-    let sec = 10;
+    let sec = 12;
     const timer = setInterval(() => {
         shakeScreen();
         vibratePattern();
@@ -118,6 +137,7 @@ document.getElementById("tap").addEventListener("click", () => {
         }
     }, 1000);
 });
+
 </script>
 
 </body>

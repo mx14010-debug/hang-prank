@@ -1,72 +1,92 @@
-<!DOCTYPE html>
-<html lang="hi">
+<!DOCTYPE html><html lang="hi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Surprise ❤️</title>
-
+  <title>Tap Love Animation</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background: pink;
+      background-color: #000;
+      color: white;
+      font-family: 'Poppins', sans-serif;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      flex-direction: column;
-      font-family: Arial, sans-serif;
+      overflow: hidden;
     }
-
-    #count {
-      font-size: 60px;
-      font-weight: bold;
-      color: black;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
     }
-
-    #surprise {
-      font-size: 20px; /* surprise text half size */
+    button {
+      background-color: #ff004c;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #ff3369;
+      transform: scale(1.1);
+    }
+    #countdown {
+      font-size: 3rem;
       margin-top: 20px;
       display: none;
     }
-
-    video {
-      width: 100%;
-      height: auto;
-      display: none;
+    #message {
+      font-size: 3rem;
+      margin-top: 30px;
+      opacity: 0;
+      color: #ff004c;
+      animation: fadeIn 2s forwards;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1.3); }
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+    }
+    .love {
+      animation: heartbeat 1s infinite;
     }
   </style>
 </head>
 <body>
+  <h1>Tap Here ❤️</h1>
+  <button id="tapButton">Tap</button>
+  <div id="countdown"></div>
+  <div id="message"></div>  <script>
+    const button = document.getElementById('tapButton');
+    const countdown = document.getElementById('countdown');
+    const message = document.getElementById('message');
 
-  <div id="count">3</div>
-  <div id="surprise">A small surprise ❤️</div>
+    button.addEventListener('click', () => {
+      button.style.display = 'none';
+      let timeLeft = 3;
+      countdown.style.display = 'block';
+      countdown.textContent = timeLeft;
 
-  <video id="myVideo" autoplay>
-    <source src="love.mp4" type="video/mp4">
-  </video>
+      const timer = setInterval(() => {
+        timeLeft--;
+        countdown.textContent = timeLeft;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          countdown.style.display = 'none';
+          showLove();
+        }
+      }, 1000);
+    });
 
-  <script>
-    let c = 3;
-    let timer = setInterval(() => {
-      c--;
-      document.getElementById("count").innerText = c;
-
-      if (c === 0) {
-        clearInterval(timer);
-
-        document.getElementById("count").style.display = "none";
-        document.getElementById("surprise").style.display = "block";
-
-        setTimeout(() => {
-          document.getElementById("surprise").style.display = "none";
-          let vid = document.getElementById("myVideo");
-          vid.style.display = "block";
-          vid.play();
-        }, 1500);
-      }
-    }, 1000);
-  </script>
-
-</body>
+    function showLove() {
+      message.textContent = 'I Love You ❤️';
+      message.classList.add('love');
+    }
+  </script></body>
 </html>

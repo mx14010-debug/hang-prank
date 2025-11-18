@@ -1,4 +1,4 @@
-  <!doctype html>
+<!doctype html>
 <html lang="hi">
 <head>
   <meta charset="utf-8" />
@@ -20,47 +20,44 @@
       cursor:pointer; background:linear-gradient(90deg,#f44336,#ff9800); color:#fff;
       box-shadow:0 6px 18px rgba(0,0,0,0.5);
     }
-    #countdown { font-size:48px; margin-top:18px; }
-
-    /* Final I Love You screen */
-    #loveScreen {
-      position:fixed; inset:0; display:none; align-items:center;
-      justify-content:center; flex-direction:column;
-      background:black; z-index:9999; color:#ff4d6d;
-      font-size:60px; font-weight:700;
+    #countdown {
+      font-size:48px; margin-top:18px;
     }
 
-    .heart {
-      font-size:90px;
-      margin-bottom:10px;
-      animation: beat 0.8s infinite alternate;
+    /* Video screen */
+    #videoScreen {
+      position:fixed; inset:0; display:none;
+      background:black; z-index:9999;
+      align-items:center; justify-content:center;
     }
-    @keyframes beat {
-      from { transform:scale(1); }
-      to   { transform:scale(1.25); }
+
+    video {
+      width:100%; height:100%; object-fit:cover;
     }
   </style>
 </head>
 
 <body>
+
   <div class="center" id="intro">
-    <h1>Ek pyara sa surprise ?</h1>
-    <p>Press karo ❤️</p>
-    <button id="startBtn">Ready — Dikhado</button>
+    <h1>Ek chota sa surprise?</h1>
+    <button id="startBtn">Start</button>
     <div id="countdown"></div>
   </div>
 
-  <!-- Final I LOVE YOU screen -->
-  <div id="loveScreen">
-    <div class="heart">❤️</div>
-    I Love You
+  <!-- Full screen Video -->
+  <div id="videoScreen">
+    <video id="loveVideo" preload="auto">
+      <source src="love.mp4" type="video/mp4">
+    </video>
   </div>
 
   <script>
     const startBtn = document.getElementById('startBtn');
     const countdownEl = document.getElementById('countdown');
     const intro = document.getElementById('intro');
-    const loveScreen = document.getElementById('loveScreen');
+    const videoScreen = document.getElementById('videoScreen');
+    const loveVideo = document.getElementById('loveVideo');
 
     startBtn.addEventListener('click', () => {
       let t = 3;
@@ -76,13 +73,15 @@
           countdownEl.textContent = '';
           intro.style.display = 'none';
 
-          // Show I Love You screen
+          // Show video
           setTimeout(() => {
-            loveScreen.style.display = 'flex';
+            videoScreen.style.display = 'flex';
+            loveVideo.play().catch(()=>{});
           }, 300);
         }
       }, 700);
     });
   </script>
+
 </body>
 </html>

@@ -1,62 +1,72 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surprise</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surprise ❤️</title>
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: pink;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            background: black;
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            flex-direction: column;
-        }
+    #count {
+      font-size: 60px;
+      font-weight: bold;
+      color: black;
+    }
 
-        #countdownText {
-            font-size: 32px;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
+    #surprise {
+      font-size: 20px; /* surprise text half size */
+      margin-top: 20px;
+      display: none;
+    }
 
-        video {
-            display: none;
-            width: 100%;
-            height: auto;
-        }
-    </style>
+    video {
+      width: 100%;
+      height: auto;
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-    <div id="countdownText">Ek chota sa surprise... 3</div>
-    <video id="surpriseVideo" src="love.mp4"></video>
+  <div id="count">3</div>
+  <div id="surprise">A small surprise ❤️</div>
 
-    <script>
-        let count = 3;
-        const text = document.getElementById("countdownText");
-        const video = document.getElementById("surpriseVideo");
+  <video id="myVideo" autoplay>
+    <source src="love.mp4" type="video/mp4">
+  </video>
 
-        const timer = setInterval(() => {
-            count--;
-            text.textContent = "Ek chota sa surprise... " + count;
+  <script>
+    let c = 3;
+    let timer = setInterval(() => {
+      c--;
+      document.getElementById("count").innerText = c;
 
-            if (count === 0) {
-                clearInterval(timer);
-                text.style.display = "none";
-                video.style.display = "block";
-                video.play();
-            }
-        }, 1000);
-    </script>
+      if (c === 0) {
+        clearInterval(timer);
+
+        document.getElementById("count").style.display = "none";
+        document.getElementById("surprise").style.display = "block";
+
+        setTimeout(() => {
+          document.getElementById("surprise").style.display = "none";
+          let vid = document.getElementById("myVideo");
+          vid.style.display = "block";
+          vid.play();
+        }, 1500);
+      }
+    }, 1000);
+  </script>
 
 </body>
 </html>

@@ -1,144 +1,123 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="hi">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System Failure</title>
-
-<style>
-    body {
-        background: #2b0000;
-        color: #ff3333;
-        font-family: monospace;
-        text-align: center;
-        padding: 20px;
-        animation: flicker 0.2s infinite;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Surprise</title>
+  <style>
+    html,body { height:100%; margin:0; font-family: Arial, sans-serif; background:#000; color:#fff; }
+    .center {
+      height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column;
     }
-
-    @keyframes flicker {
-        0% { opacity: 0.95; }
-        50% { opacity: 1; }
-        100% { opacity: 0.92; }
+    #startBtn {
+      padding:14px 22px; font-size:18px; border-radius:10px; border:none; cursor:pointer;
+      background:linear-gradient(90deg,#f44336,#ff9800); color:#fff;
+      box-shadow:0 6px 18px rgba(0,0,0,0.5);
     }
-
-    .error-box {
-        margin-top: 40px;
-        padding: 20px;
-        border: 2px solid red;
-        border-radius: 10px;
-        background: #220000;
-        box-shadow: 0 0 20px red;
+    #countdown { font-size:48px; margin-top:18px; }
+    #scareOverlay {
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background:black; z-index:9999;
+      animation: flash 0.15s linear 3;
     }
-
-    #countdown {
-        font-size: 30px;
-        color: #ff5555;
-        margin-top: 20px;
+    #scareOverlay img { max-width:120%; max-height:120%; transform:scale(1.05); }
+    @keyframes flash {
+      0%{opacity:1}50%{opacity:0.15}100%{opacity:1}
     }
-
-    #tap {
-        margin-top: 100px;
-        font-size: 22px;
-        color: white;
-        background: red;
-        padding: 15px;
-        border-radius: 10px;
-        display: inline-block;
-        animation: glow 1s infinite;
+    #stopBtn {
+      position:fixed; top:12px; right:12px; z-index:10000; padding:8px 12px; border-radius:8px; border:none; cursor:pointer;
+      background:rgba(255,255,255,0.9); color:#000; font-weight:600;
     }
-
-    @keyframes glow {
-        0% { box-shadow: 0 0 10px red; }
-        50% { box-shadow: 0 0 25px red; }
-        100% { box-shadow: 0 0 10px red; }
-    }
-</style>
+    footer { position:fixed; bottom:8px; width:100%; text-align:center; font-size:12px; color:#aaa; }
+  </style>
 </head>
-
 <body>
+  <div class="center" id="intro">
+    <h1>Ek chota sa surprise?</h1>
+    <p>Press karo agar tum ready ho — bina permission ke kisi ko mat bhejna.</p>
+    <button id="startBtn">Ready — Dikhado</button>
+    <div id="countdown"></div>
+  </div>
 
-<h1>⚠️ CRITICAL SYSTEM ERROR</h1>
-<p>Unusual device activity detected...</p>
+  <div id="scareOverlay" role="dialog" aria-hidden="true">
+    <button id="stopBtn">Stop</button>
+    <img id="scareImg" src="scary.jpg" alt="Scary" />
+  </div>
 
-<div class="error-box">
-<pre>
-[ERROR] Kernel panic detected
-[WARN] Memory spike dangerous (97%)
-[FAIL] Filesystem corruption suspected
-</pre>
-</div>
+  <audio id="scareAudio" preload="auto">
+    <source src="scream.mp3" />
+    <!-- Agar browser mp3 support na kare to yahan aur formats add kar sakte ho -->
+  </audio>
 
-<div id="countdown">Tap to start diagnostic…</div>
+  <footer>Use responsibly — medical conditions wale logon ko mat darao.</footer>
 
-<div id="tap">⚠️ TAP HERE</div>
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const countdownEl = document.getElementById('countdown');
+    const overlay = document.getElementById('scareOverlay');
+    const audio = document.getElementById('scareAudio');
+    const stopBtn = document.getElementById('stopBtn');
+    const intro = document.getElementById('intro');
 
-<script>
+    function playScare() {
+      // Show overlay full-screen and play sound
+      overlay.style.display = 'flex';
+      overlay.setAttribute('aria-hidden', 'false');
 
-let stream;
-
-// FLASHLIGHT FUNCTION
-const flashOn = async () => {
-    try {
-        stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" }
+      // try to play audio (may require user gesture on mobile)
+      const p = audio.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          // If autoplay blocked, show a visible instruction (overlay already visible) — user can tap Stop then Play manually
         });
-        const track = stream.getVideoTracks()[0];
-        const capabilities = track.getCapabilities();
+      }
 
-        if (capabilities.torch) {
-            await track.applyConstraints({
-                advanced: [{ torch: true }]
-            });
-        }
-    } catch (e) {
-        console.log("Flash not supported", e);
+      // extra flashing effect (repeat a few times)
+      overlay.style.animation = 'flash 0.12s linear 6';
     }
-};
 
-// VIBRATION FUNCTION
-function vibratePattern() {
-    if (navigator.vibrate) {
-        navigator.vibrate([300, 100, 300, 100, 500]);
-    }
-}
-
-// RINGTONE (WORKS ON TAP)
-const audio = new Audio("https://www.fesliyanstudios.com/play-mp3/4388");
-audio.loop = true;
-
-// SCREEN SHAKE
-function shakeScreen() {
-    document.body.style.transform = "translate(5px,5px)";
-    setTimeout(() => {
-        document.body.style.transform = "translate(-5px,-5px)";
-    }, 100);
-}
-
-document.getElementById("tap").addEventListener("click", () => {
-    
-    // Hide tap button
-    document.getElementById("tap").style.display = "none";
-
-    // Start everything
-    flashOn();
-    vibratePattern();
-    audio.play();  // 🔥 Ringtone starts
-
-    let sec = 12;
-    const timer = setInterval(() => {
-        shakeScreen();
-        vibratePattern();
-        document.getElementById("countdown").innerHTML = "Shutting down in " + sec;
-
-        sec--;
-        if (sec < 0) {
-            clearInterval(timer);
-            document.getElementById("countdown").innerHTML = "FORCED RESET FAILED ❌";
+    startBtn.addEventListener('click', () => {
+      // short countdown 3..2..1
+      let t = 3;
+      countdownEl.textContent = t;
+      startBtn.disabled = true;
+      const timer = setInterval(() => {
+        t--;
+        if (t > 0) {
+          countdownEl.textContent = t;
+        } else {
+          clearInterval(timer);
+          countdownEl.textContent = '';
+          intro.style.display = 'none';
+          // small timeout to make effect stronger
+          setTimeout(playScare, 350);
         }
-    }, 1000);
-});
+      }, 700);
+    });
 
-</script>
+    stopBtn.addEventListener('click', () => {
+      audio.pause();
+      audio.currentTime = 0;
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden', 'true');
+      // allow replaying if desired
+      intro.style.display = 'flex';
+      startBtn.disabled = false;
+    });
 
+    // Optional: hide overlay automatically after 8 seconds
+    audio.addEventListener('play', () => {
+      setTimeout(() => {
+        if (!audio.paused) {
+          audio.pause();
+          audio.currentTime = 0;
+          overlay.style.display = 'none';
+          overlay.setAttribute('aria-hidden', 'true');
+          intro.style.display = 'flex';
+          startBtn.disabled = false;
+        }
+      }, 8000);
+    });
+  </script>
 </body>
 </html>

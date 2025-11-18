@@ -1,87 +1,62 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Surprise</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise</title>
 
-  <style>
-    html,body {
-      height:100%; margin:0; font-family: Arial, sans-serif;
-      background:#000; color:#fff;
-    }
-    .center {
-      height:100%; display:flex; align-items:center;
-      justify-content:center; flex-direction:column;
-      text-align:center;
-    }
-    #startBtn {
-      padding:14px 22px; font-size:18px; border-radius:10px; border:none;
-      cursor:pointer; background:linear-gradient(90deg,#f44336,#ff9800); color:#fff;
-      box-shadow:0 6px 18px rgba(0,0,0,0.5);
-    }
-    #countdown {
-      font-size:48px; margin-top:18px;
-    }
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-    /* Video screen */
-    #videoScreen {
-      position:fixed; inset:0; display:none;
-      background:black; z-index:9999;
-      align-items:center; justify-content:center;
-    }
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            flex-direction: column;
+        }
 
-    video {
-      width:100%; height:100%; object-fit:cover;
-    }
-  </style>
+        #countdownText {
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        video {
+            display: none;
+            width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
-
 <body>
 
-  <div class="center" id="intro">
-    <h1>Ek chota sa surprise?</h1>
-    <button id="startBtn">Start</button>
-    <div id="countdown"></div>
-  </div>
+    <div id="countdownText">Ek chota sa surprise... 3</div>
+    <video id="surpriseVideo" src="love.mp4"></video>
 
-  <!-- Full screen Video -->
-  <div id="videoScreen">
-    <video id="loveVideo" preload="auto">
-      <source src="love.mp4" type="video/mp4">
-    </video>
-  </div>
+    <script>
+        let count = 3;
+        const text = document.getElementById("countdownText");
+        const video = document.getElementById("surpriseVideo");
 
-  <script>
-    const startBtn = document.getElementById('startBtn');
-    const countdownEl = document.getElementById('countdown');
-    const intro = document.getElementById('intro');
-    const videoScreen = document.getElementById('videoScreen');
-    const loveVideo = document.getElementById('loveVideo');
+        const timer = setInterval(() => {
+            count--;
+            text.textContent = "Ek chota sa surprise... " + count;
 
-    startBtn.addEventListener('click', () => {
-      let t = 3;
-      countdownEl.textContent = t;
-      startBtn.disabled = true;
-
-      const timer = setInterval(() => {
-        t--;
-        if (t > 0) {
-          countdownEl.textContent = t;
-        } else {
-          clearInterval(timer);
-          countdownEl.textContent = '';
-          intro.style.display = 'none';
-
-          // Show video
-          setTimeout(() => {
-            videoScreen.style.display = 'flex';
-            loveVideo.play().catch(()=>{});
-          }, 300);
-        }
-      }, 700);
-    });
-  </script>
+            if (count === 0) {
+                clearInterval(timer);
+                text.style.display = "none";
+                video.style.display = "block";
+                video.play();
+            }
+        }, 1000);
+    </script>
 
 </body>
 </html>

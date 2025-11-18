@@ -1,86 +1,72 @@
-<!doctype html>
+  <!doctype html>
 <html lang="hi">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Surprise</title>
+
   <style>
-    html,body { height:100%; margin:0; font-family: Arial, sans-serif; background:#000; color:#fff; }
+    html,body {
+      height:100%; margin:0; font-family: Arial, sans-serif;
+      background:#000; color:#fff;
+    }
     .center {
-      height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column;
+      height:100%; display:flex; align-items:center;
+      justify-content:center; flex-direction:column;
+      text-align:center;
     }
     #startBtn {
-      padding:14px 22px; font-size:18px; border-radius:10px; border:none; cursor:pointer;
-      background:linear-gradient(90deg,#f44336,#ff9800); color:#fff;
+      padding:14px 22px; font-size:18px; border-radius:10px; border:none;
+      cursor:pointer; background:linear-gradient(90deg,#f44336,#ff9800); color:#fff;
       box-shadow:0 6px 18px rgba(0,0,0,0.5);
     }
     #countdown { font-size:48px; margin-top:18px; }
-    #scareOverlay {
-      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
-      background:black; z-index:9999;
-      animation: flash 0.15s linear 3;
+
+    /* Final I Love You screen */
+    #loveScreen {
+      position:fixed; inset:0; display:none; align-items:center;
+      justify-content:center; flex-direction:column;
+      background:black; z-index:9999; color:#ff4d6d;
+      font-size:60px; font-weight:700;
     }
-    #scareOverlay img { max-width:120%; max-height:120%; transform:scale(1.05); }
-    @keyframes flash {
-      0%{opacity:1}50%{opacity:0.15}100%{opacity:1}
+
+    .heart {
+      font-size:90px;
+      margin-bottom:10px;
+      animation: beat 0.8s infinite alternate;
     }
-    #stopBtn {
-      position:fixed; top:12px; right:12px; z-index:10000; padding:8px 12px; border-radius:8px; border:none; cursor:pointer;
-      background:rgba(255,255,255,0.9); color:#000; font-weight:600;
+    @keyframes beat {
+      from { transform:scale(1); }
+      to   { transform:scale(1.25); }
     }
-    footer { position:fixed; bottom:8px; width:100%; text-align:center; font-size:12px; color:#aaa; }
   </style>
 </head>
+
 <body>
   <div class="center" id="intro">
     <h1>Ek chota sa surprise?</h1>
-    <p>Press nhi kiya to 100 baap ka .</p>
+    <p>Press karo ❤️</p>
     <button id="startBtn">Ready — Dikhado</button>
     <div id="countdown"></div>
   </div>
 
-  <div id="scareOverlay" role="dialog" aria-hidden="true">
-    <button id="stopBtn">Stop</button>
-    <img id="scareImg" src="scary.jpg" alt="Scary" />
+  <!-- Final I LOVE YOU screen -->
+  <div id="loveScreen">
+    <div class="heart">❤️</div>
+    I Love You
   </div>
-
-  <audio id="scareAudio" preload="auto">
-    <source src="scream.mp3" />
-    <!-- Agar browser mp3 support na kare to yahan aur formats add kar sakte ho -->
-  </audio>
-
-  <footer>Use responsibly — medical conditions wale logon ko mat darao.</footer>
 
   <script>
     const startBtn = document.getElementById('startBtn');
     const countdownEl = document.getElementById('countdown');
-    const overlay = document.getElementById('scareOverlay');
-    const audio = document.getElementById('scareAudio');
-    const stopBtn = document.getElementById('stopBtn');
     const intro = document.getElementById('intro');
-
-    function playScare() {
-      // Show overlay full-screen and play sound
-      overlay.style.display = 'flex';
-      overlay.setAttribute('aria-hidden', 'false');
-
-      // try to play audio (may require user gesture on mobile)
-      const p = audio.play();
-      if (p !== undefined) {
-        p.catch(() => {
-          // If autoplay blocked, show a visible instruction (overlay already visible) — user can tap Stop then Play manually
-        });
-      }
-
-      // extra flashing effect (repeat a few times)
-      overlay.style.animation = 'flash 0.12s linear 6';
-    }
+    const loveScreen = document.getElementById('loveScreen');
 
     startBtn.addEventListener('click', () => {
-      // short countdown 3..2..1
       let t = 3;
       countdownEl.textContent = t;
       startBtn.disabled = true;
+
       const timer = setInterval(() => {
         t--;
         if (t > 0) {
@@ -89,34 +75,13 @@
           clearInterval(timer);
           countdownEl.textContent = '';
           intro.style.display = 'none';
-          // small timeout to make effect stronger
-          setTimeout(playScare, 350);
+
+          // Show I Love You screen
+          setTimeout(() => {
+            loveScreen.style.display = 'flex';
+          }, 300);
         }
       }, 700);
-    });
-
-    stopBtn.addEventListener('click', () => {
-      audio.pause();
-      audio.currentTime = 0;
-      overlay.style.display = 'none';
-      overlay.setAttribute('aria-hidden', 'true');
-      // allow replaying if desired
-      intro.style.display = 'flex';
-      startBtn.disabled = false;
-    });
-
-    // Optional: hide overlay automatically after 8 seconds
-    audio.addEventListener('play', () => {
-      setTimeout(() => {
-        if (!audio.paused) {
-          audio.pause();
-          audio.currentTime = 0;
-          overlay.style.display = 'none';
-          overlay.setAttribute('aria-hidden', 'true');
-          intro.style.display = 'flex';
-          startBtn.disabled = false;
-        }
-      }, 8000);
     });
   </script>
 </body>
